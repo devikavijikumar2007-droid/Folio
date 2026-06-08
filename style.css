@@ -1,4 +1,3 @@
-
 :root {
   /* Colours */
   --primary: #5A8FB0;    /* Color/Primary – buttons, links, accents */
@@ -248,7 +247,10 @@ ul {
   border-radius: var(--r-lg);
   padding: var(--s24);
   box-shadow: var(--shadow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
+  opacity: 1;
+  transform: scale(1);
+  visibility: visible;
 }
 
 .card:hover {
@@ -269,8 +271,6 @@ ul {
   margin: var(--s8) 0 var(--s12);
 }
 
-/* flex: 1 pushes everything below it to the bottom,
-   so all card footers line up at the same height. */
 .card-desc {
   flex: 1;
   color: var(--ink-muted);
@@ -299,7 +299,93 @@ ul {
   color: var(--primary);
 }
 
-/* ---------- 8. SKILLS / CONTACT / FOOTER ---------- */
+/* Hidden state when a project card is filtered out (Task 3) */
+.projects-grid .card.is-hidden {
+  opacity: 0;
+  transform: scale(0.92);
+  visibility: hidden;
+  position: absolute;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  border: none;
+  pointer-events: none;
+}
+
+/* ---------- 8. GALLERY FILTERS (TASK 3) ---------- */
+.gallery-filter-wrapper {
+  margin-bottom: var(--s32);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s12);
+}
+
+.project-count-display {
+  font-size: var(--sm);
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: 0.05em;
+}
+
+.filter-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--ink);
+  padding: var(--s8) var(--s24);
+  border-radius: var(--r-pill);
+  font-size: var(--sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.filter-btn:hover, 
+.filter-btn.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+/* ---------- 9. BLOG SECTION (TASK 1) ---------- */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s24);
+  margin-top: var(--s32);
+}
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  padding: var(--s24);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+}
+
+.date {
+  color: var(--ink-muted);
+  font-size: var(--sm);
+  margin-bottom: var(--s8);
+}
+
+.blog-card a {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--primary);
+  margin-top: var(--s16);
+  display: inline-block;
+}
+
+/* ---------- 10. SKILLS / CONTACT / FOOTER ---------- */
 .skills-list {
   display: flex;
   flex-direction: column;
@@ -384,9 +470,7 @@ ul {
   margin-top: var(--s8);
 }
 
-/* ---------- 9. BACK-TO-TOP + REVEAL + RESPONSIVE ---------- */
-
-/* Back-to-top button: hidden until JS adds .show */
+/* ---------- 11. BACK-TO-TOP + REVEAL ---------- */
 .to-top {
   position: fixed;
   bottom: var(--s24);
@@ -410,7 +494,6 @@ ul {
   pointer-events: auto;
 }
 
-/* Scroll reveal: elements start hidden, JS adds .is-visible */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -422,7 +505,6 @@ ul {
   transform: translateY(0);
 }
 
-/* Respect users who prefer no motion */
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;

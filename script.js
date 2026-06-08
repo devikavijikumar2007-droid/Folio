@@ -56,3 +56,53 @@ const observer = new IntersectionObserver((entries) => {
 
 // Tell the observer to watch each reveal element.
 revealItems.forEach((item) => observer.observe(item));
+
+const filterButtons = document.querySelectorAll('.filter-btn');
+const projectCards = document.querySelectorAll('.projects-grid .card');
+const currentCountEl = document.getElementById('current-count');
+const totalCountEl = document.getElementById('total-count');
+
+// Initialize total count baseline text if elements exist on page.
+if (totalCountEl && projectCards.length > 0) {
+    totalCountEl.textContent = projectCards.length;
+}
+
+// FUNCTION to manage visibility states.
+function updateGallery(filterValue) {
+    let visibleCount = 0;
+
+    projectCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+
+        // CHANGE: Show if it matches category or if 'all' is chosen.
+        if (filterValue === 'all' || cardCategory === filterValue) {
+            card.classList.remove('is-hidden');
+            visibleCount++;
+        } else {
+            card.classList.add('is-hidden');
+        }
+    });
+
+    // CHANGE: Dynamic numerical string injection for current items.
+    if (currentCountEl) {
+        currentCountEl.textContent = visibleCount;
+    }
+}
+
+// LISTEN for clicks on each filter button.
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // SWAP active class state on buttons.
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // RUN gallery filter logic update.
+        const targetFilter = button.getAttribute('data-filter');
+        updateGallery(targetFilter);
+    });
+});
+
+// Initialize on page load
+if (filterButtons.length > 0) {
+    updateGallery('all');
+}
