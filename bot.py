@@ -69,7 +69,7 @@ def run():
     # Save to a file (uploaded as a downloadable artifact by the workflow)
     with open("daily_summary.txt", "w", encoding="utf-8") as f:
         f.write(summary)
-
+    send_email(summary)
     print("Pulse ran successfully.")
 
 
@@ -78,3 +78,23 @@ def run():
 # Does NOT run when another file imports bot.py
 if __name__ == "__main__":
     run()
+import os
+api_key = os.environ.get("WEATHER_API_KEY")
+import smtplib
+from email.mime.text import MIMEText
+import os
+
+def send_email(summary_text):
+    sender = os.environ.get("EMAIL_SENDER")
+    password = os.environ.get("EMAIL_PASSWORD") # Gmail App Password
+    receiver = os.environ.get("EMAIL_RECEIVER")
+    
+    msg = MIMEText(summary_text)
+    msg['Subject'] = 'Pulse - Daily Summary'
+    msg['From'] = sender
+    msg['To'] = receiver
+    
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(sender, password)
+        server.sendmail(sender, receiver, msg.as_string())
+    print("Email sent.")
