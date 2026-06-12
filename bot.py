@@ -5,6 +5,9 @@
 
 import requests
 from datetime import date
+import smtplib
+from email.mime.text import MIMEText
+import os
 
 
 # -- FUNCTION 1: Weather ----------------------------------------------------
@@ -58,33 +61,9 @@ TODAY'S QUOTE
     return summary
 
 
-# -- FUNCTION 4: Run everything --------------------------------------------
-def run():
-    """Main entry point. Called by GitHub Actions."""
-    summary = build_summary()
-
-    # Print to the GitHub Actions log (visible in the Actions tab)
-    print(summary)
-
-    # Save to a file (uploaded as a downloadable artifact by the workflow)
-    with open("daily_summary.txt", "w", encoding="utf-8") as f:
-        f.write(summary)
-    send_email(summary)
-    print("Pulse ran successfully.")
-
-
-# -- Entry point guard ------------------------------------------------------
-# Only runs when you execute: python bot.py
-# Does NOT run when another file imports bot.py
-if __name__ == "__main__":
-    run()
-import os
-api_key = os.environ.get("WEATHER_API_KEY")
-import smtplib
-from email.mime.text import MIMEText
-import os
-
+# -- FUNCTION 4: Send Email ------------------------------------------------
 def send_email(summary_text):
+    """Send the completed summary to your email using GitHub Secrets."""
     sender = os.environ.get("EMAIL_SENDER")
     password = os.environ.get("EMAIL_PASSWORD") # Gmail App Password
     receiver = os.environ.get("EMAIL_RECEIVER")
@@ -98,3 +77,26 @@ def send_email(summary_text):
         server.login(sender, password)
         server.sendmail(sender, receiver, msg.as_string())
     print("Email sent.")
+
+
+# -- FUNCTION 5: Run everything --------------------------------------------
+def run():
+    """Main entry point. Called by GitHub Actions."""
+    summary = build_summary()
+
+    # Print to the GitHub Actions log (visible in the Actions tab)
+    print(summary)
+
+    # Save to a file (uploaded as a downloadable artifact by the workflow)
+    with open("daily_summary.txt", "w", encoding="utf-8") as f:
+        f.write(summary)
+        
+    # Send the automated email summary
+    send_email(summary)
+    print("Pulse ran successfully.")
+
+
+# -- Entry point guard ------------------------------------------------------
+# Only runs when you execute: python bot.py
+if __name__ == "__main__":
+    run()
