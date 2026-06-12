@@ -37,6 +37,7 @@ jobs:
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY}}
         run: python bot.py
 
       # Step 5: Save the output file so you can download it
@@ -45,4 +46,3 @@ jobs:
         with:
           name: daily-summary
           path: daily_summary.txt
-          

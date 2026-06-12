@@ -14,8 +14,9 @@ import os
 def get_weather(city="Thiruvananthapuram"):
     """Fetch today's weather as a one-line text summary."""
     url = f"https://wttr.in/{city}?format=3"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         return response.text.strip()  # remove trailing whitespace/newlines
     except Exception as e:
@@ -26,8 +27,9 @@ def get_weather(city="Thiruvananthapuram"):
 def get_quote():
     """Fetch a random motivational quote from ZenQuotes."""
     url = "https://zenquotes.io/api/random"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         data = response.json()         # converts JSON text to a Python list
         quote = data[0]["q"]           # the quote text
@@ -68,15 +70,24 @@ def send_email(summary_text):
     password = os.environ.get("EMAIL_PASSWORD") # Gmail App Password
     receiver = os.environ.get("EMAIL_RECEIVER")
     
-    msg = MIMEText(summary_text)
+    # Validation check for GitHub Secrets
+    if not all([sender, password, receiver]):
+        print("Error: Missing one or more email environment variables. Skipping email step.")
+        return
+
+    # Using utf-8 encoding to prevent errors with special characters in quotes
+    msg = MIMEText(summary_text, 'plain', 'utf-8')
     msg['Subject'] = 'Pulse - Daily Summary'
     msg['From'] = sender
     msg['To'] = receiver
     
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(sender, password)
-        server.sendmail(sender, receiver, msg.as_string())
-    print("Email sent.")
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(sender, password)
+            server.sendmail(sender, receiver, msg.as_string())
+        print("Email sent successfully.")
+    except Exception as e:
+        print(f"Failed to send email: {e}")
 
 
 # -- FUNCTION 5: Run everything --------------------------------------------
